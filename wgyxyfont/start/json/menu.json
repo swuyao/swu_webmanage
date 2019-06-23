@@ -1,0 +1,83 @@
+{
+  "code": 0
+  ,"msg": ""
+  ,"data": [ {
+  "name": "teacher"
+,"title": "教师中心"
+,"icon": "layui-icon-form"
+,"list": [{
+    "name": "notice"
+  ,"title": "公告"
+  },{
+    "name": "info"
+  ,"title": "个人信息"
+  },{
+    "name": "lesson"
+  ,"title": "课程"
+  },{
+    "name": "suggest"
+  ,"title": "建议"
+  }]
+},{
+  "name": "student"
+,"title": "学生中心"
+,"icon": "layui-icon-form"
+,"list": [{
+    "name": "notice"
+  ,"title": "公告"
+  },{
+    "name": "info"
+  ,"title": "个人信息"
+  },{
+    "name": "lesson"
+  ,"title": "课程"
+  },{
+    "name": "xuanlesson"
+  ,"title": "选课"
+  },{
+    "name": "suggest"
+  ,"title": "建议"
+  }]
+},{
+  "name": "admin-menber"
+,"title": "人员管理"
+,"icon": "layui-icon-form"
+,"list": [{
+    "name": "menber"
+  ,"title": "人员管理"
+  },{
+    "name": "teacher"
+  ,"title": "教师管理"
+  },{
+    "name": "student"
+  ,"title": "学生管理"
+  }]
+},{
+  "name": "lesson"
+,"title": "课程管理"
+,"icon": "layui-icon-form"
+,"list": [{
+    "name": "lesson"
+  ,"title": "课程管理"
+  }]
+}, {
+  "name": "time"
+,"title": "时间管理"
+,"icon": "layui-icon-set"
+,"list": [{
+    "name": "lesson"
+  ,"title": "时间管理"
+  }]
+}, {
+  "name": "notice"
+,"title": "公告管理"
+,"icon": "layui-icon-set"
+,"list": [{
+    "name": "notice"
+  ,"title": "新建公告"
+  },{
+    "name": "history"
+  ,"title": "历史公告"
+  }]
+}]
+}

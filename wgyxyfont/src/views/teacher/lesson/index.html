@@ -1,0 +1,266 @@
+
+
+<title>公告管理</title>
+
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a >公告管理</a>
+  </div>
+</div>
+
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-tab" lay-filter="shopList">
+          <div class="layui-card pad15" >
+            <div class="layui-card-header">课程列表</div>
+            <div class="layui-card-body">
+              <table id="LAY-menber"  lay-filter="LAY-menber"></table>
+              <script type="text/html" id="table-menber-webuser">
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="list"><i class="layui-icon"></i>学生列表</a>
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="modi"><i class="layui-icon"></i>修改时间</a>
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="d"><i class="layui-icon"></i>下载成绩</a>
+              </script>
+            </div>
+          </div>
+
+          <div class="layui-card pad15" id="student" >
+              <div class="layui-card-header">学生列表</div>
+              <div class="layui-card-body">
+              <table id="LAY-student"  lay-filter="LAY-student"></table>
+              <script type="text/html" id="table-student-webuser">
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="modi"><i class="layui-icon"></i>详情</a>
+              </script>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    Date.prototype.format = function(format) {
+        var o = {
+            "M+" : this.getMonth() + 1,// month
+            "d+" : this.getDate(),// day
+            "h+" : this.getHours(),// hour
+            "m+" : this.getMinutes(),// minute
+            "s+" : this.getSeconds(),// second
+            "q+" : Math.floor((this.getMonth() + 3) / 3),// quarter
+            "S" : this.getMilliseconds()
+            // millisecond
+        };
+        if (/(y+)/.test(format) || /(Y+)/.test(format)) {
+            format = format.replace(RegExp.$1, (this.getFullYear() +
+                "").substr(4 - RegExp.$1.length));
+        }
+        for ( var k in o) {
+            if (new RegExp("(" + k + ")").test(format)) {
+                format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
+            }
+        }
+        return format;
+    };
+    layui.use([ 'table','element','upload','laydate'], function(){
+        var $ = layui.$
+            ,admin = layui.admin
+            ,laydate = layui.laydate
+            ,element = layui.element
+            ,view = layui.view
+            ,table = layui.table
+            ,form = layui.form
+            ,upload = layui.upload;
+        var data = {"coursename":"","deletenumber":"","addnumber":"","updatenumber":"","number":"","newcoursename":"","newnumber":"","newskteacher":""}
+        var shopId = "";
+        var categoryList = {};
+        layui.setter.menu();
+        $('#student').hide();
+        form.render(null, 'layuiadmin-form-categoryadmin');
+        form.on('select(role)', function(data){
+            var role = data.value;
+            if(role){
+                table.reload('LAY-student', {
+                    where: {
+                        role: role
+                    }
+                });
+            }
+        });
+        table.render({
+            elem: '#LAY-menber'
+            ,url: layui.setter.ServerURL+'teacher/findCourseByTeachernumber'
+            ,page:  true
+            ,where: data
+            ,method:'get'
+            ,headers:{
+                "token":layui.data('layuiAdmin').access_token,
+            },cols: [[ //表头
+                // {field: 'courseid', title: '课程号'},
+                {field: 'coursename', title: '课程名'},
+                {field: 'number', title: '课程编号'},
+                {field: 'skteacher', title: '授课老师'},
+                {field: 'skteacher', title: '作业截止时间',templet: function(d){
+                        var date = new Date(d.posttime).format("yyyy-MM-dd hh:mm:ss");
+                        return date;
+                    }},
+                {title: '操作', width: 350, align:'center', fixed: 'right', toolbar: '#table-menber-webuser'}
+            ]],request: {
+                pageName: 'pageNum' //页码的参数名称，默认：page
+                ,limitName: 'pageSize' //每页数据量的参数名，默认：limit
+            }
+        });
+        table.on('tool(LAY-menber)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'list'){
+                $('#student').show();
+                table.render({
+                    elem: '#LAY-student'
+                    ,url: layui.setter.ServerURL+'download/showHomeworkList'
+                    ,page:  true
+                    ,where: data
+                    ,method:'get'
+                    ,headers:{
+                        "token":layui.data('layuiAdmin').access_token,
+                    },cols: [[ //表头
+                        // {field: 'courseid', title: '课程号'},
+                        {field: 'filemaker', title: '校园卡号'},
+                        {field: 'filemakername', title: '姓名'},
+                        {field: 'state', title: '状态'},
+                        {field: 'filename', title: '文件名'},
+                        {field: 'remark', title: '评语'},
+                        {field: 'score', title: '评分'},
+                        {title: '操作', width: 150, align:'center', fixed: 'right', toolbar: '#table-student-webuser'}
+                    ]],request: {
+                        pageName: 'pageNum' //页码的参数名称，默认：page
+                        ,limitName: 'pageSize' //每页数据量的参数名，默认：limit
+                    }
+                });
+            }else if(obj.event == "d"){
+                window.location.href = layui.setter.ServerURL + 'sc/ScExcelDownloads?courseid=' + data.courseid;
+                // var xhh = new XMLHttpRequest();
+                // xhh.open("get", url );
+                // xhh.setRequestHeader("token", layui.data('layuiAdmin').access_token);
+                // xhh.setRequestHeader("Content-Type","application/json");
+                // xhh.responseType = 'blob';
+                // xhh.onreadystatechange = function () {
+                //
+                //     if (xhh.readyState === 4 && xhh.status === 200) {
+                //         var name = xhh.getResponseHeader("ajax-filename");
+                //         var mimeType = xhh.getResponseHeader("ajax-mimeType");
+                //         var blob = new Blob([xhh.response], {type: mimeType});
+                //         var csvUrl = URL.createObjectURL(blob);
+                //         var link = document.createElement('a');
+                //         document.body.appendChild(link); //创建的标签添加到body，解决Firefox下无法打开页面的问题
+                //         link.href = csvUrl;
+                //         link.target = '_blank';
+                //         link.id = 'linkId',
+                //             link.className = 'linkId',
+                //             link.download = decodeURI(name);
+                //         document.getElementById("linkId").click();
+                //         // link.remove(); //将a标签移除
+                //         $('.linkId').remove()
+                //     }
+                // };
+                // xhh.send();
+
+            }else{
+                admin.popup({
+                    title: '修改提交时间'
+                    , area: ['400px', '250px']
+                    , id: 'LAY-popup-shop-add'
+                    , success: function (layero, index) {
+                        data.posttime = new Date(data.posttime).format("yyyy-MM-dd hh:mm:ss");
+                        view(this.id).render('teacher/lesson/changeTime', data).done(function () {
+                            form.render(null, 'layuiadmin-form-shopadmin');
+                            laydate.render({
+                                elem: '#test1' //指定元素
+                                ,type: 'datetime'
+                            });
+                            //监听提交
+                            form.on('submit(LAY-shop-front-submit)', function (data) {
+                                var data = data.field;
+                                $.ajax({
+                                    url: layui.setter.ServerURL + 'course/updateCoursePosttime',
+                                    contentType: "application/json",
+                                    headers:{"token":layui.data('layuiAdmin').access_token},
+                                    data: data, //请求的附加参数，用json对象
+                                    method: 'GET',
+                                    success: function (res) {
+                                        if (res) {
+                                            $.ajax({
+                                                url: layui.setter.ServerURL + 'time/addposttime',
+                                                contentType: "application/json",
+                                                headers:{"token":layui.data('layuiAdmin').access_token},
+                                                data: data, //请求的附加参数，用json对象
+                                                method: 'GET',
+                                                success: function (res) {
+                                                    if (res) {
+                                                        layer.close(index); //执行关闭
+                                                        layer.msg("修改时间成功啦", {icon: 1});
+                                                        layui.table.reload('LAY-menber'); //重载表格
+                                                    } else {
+                                                        layer.msg("修改时间失败", {icon: 2});
+                                                    }
+                                                },
+                                                error: function () {
+                                                    layer.msg("修改时间失败", {icon: 5});
+                                                }
+                                            });
+                                        } else {
+                                            layer.msg("作业批改失败", {icon: 2});
+                                        }
+                                    },
+                                    error: function () {
+                                        layer.msg("作业批改失败", {icon: 5});
+                                    }
+                                });
+                            });
+                        });
+                    }
+                })
+            }
+        });
+        table.on('tool(LAY-student)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'modi'){
+                admin.popup({
+                    title: '作业查看'
+                    , area: ['800px', '600px']
+                    , id: 'LAY-popup-shop-add'
+                    , success: function (layero, index) {
+                        view(this.id).render('teacher/lesson/showHomework', data).done(function () {
+                            form.render(null, 'layuiadmin-form-shopadmin');
+                            //监听提交
+                            form.on('submit(LAY-shop-front-submit)', function (data) {
+                                var data = data.field;
+                                $.ajax({
+                                    url: layui.setter.ServerURL + 'sc/score',
+                                    contentType: "application/json",
+                                    headers:{"token":layui.data('layuiAdmin').access_token},
+                                    data: JSON.stringify(data), //请求的附加参数，用json对象
+                                    method: 'POST',
+                                    success: function (res) {
+                                        if (res.message == true) {
+                                            layer.close(index); //执行关闭
+                                            layer.msg("作业批改完成啦", {icon: 1});
+                                            layui.table.reload('LAY-student'); //重载表格
+                                        } else {
+                                            layer.msg("作业批改失败", {icon: 2});
+                                        }
+                                    },
+                                    error: function () {
+                                        layer.msg("作业批改失败", {icon: 5});
+                                    }
+                                });
+                            });
+
+                        });
+                    }
+                })
+            }
+        });
+    });
+
+</script>

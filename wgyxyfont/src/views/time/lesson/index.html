@@ -1,0 +1,218 @@
+
+
+<title>商品管理</title>
+
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">课程管理</a>
+  </div>
+</div>
+
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-tab" lay-filter="shopList">
+          <div class="layui-card pad15" >
+            <div class="layui-card-header">时间管理</div>
+            <div class="layui-card-body">
+              <fieldset class="layui-elem-field layui-field-title" style="margin-top: 0px;">
+                <legend>作业提交时间</legend>
+              </fieldset>
+              <div class="layui-inline">
+                <input type="text" class="layui-input" id="test1" value="2019-10-10 00:00:00">
+              </div>
+              <blockquote class="layui-elem-quote" style="margin-top: 10px;">
+                <div id="test2"></div>
+              </blockquote>
+              <fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
+                <legend>地址提交时间</legend>
+              </fieldset>
+              <div class="layui-inline">
+                <input type="text" class="layui-input" id="test3" value="2019-11-11 00:00:00">
+              </div>
+              <blockquote class="layui-elem-quote" style="margin-top: 10px;">
+                <div id="test4"></div>
+              </blockquote>
+              <fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
+                <legend>论文提交时间</legend>
+              </fieldset>
+              <div class="layui-inline">
+                <input type="text" class="layui-input" id="test5" value="2019-12-12 00:00:00">
+              </div>
+              <blockquote class="layui-elem-quote" style="margin-top: 10px;">
+                <div id="test6"></div>
+              </blockquote>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    Date.prototype.format = function(format) {
+        var o = {
+            "M+" : this.getMonth() + 1,// month
+            "d+" : this.getDate(),// day
+            "h+" : this.getHours(),// hour
+            "m+" : this.getMinutes(),// minute
+            "s+" : this.getSeconds(),// second
+            "q+" : Math.floor((this.getMonth() + 3) / 3),// quarter
+            "S" : this.getMilliseconds()
+            // millisecond
+        };
+        if (/(y+)/.test(format) || /(Y+)/.test(format)) {
+            format = format.replace(RegExp.$1, (this.getFullYear() +
+                "").substr(4 - RegExp.$1.length));
+        }
+        for ( var k in o) {
+            if (new RegExp("(" + k + ")").test(format)) {
+                format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
+            }
+        }
+        return format;
+    };
+    layui.use([ 'util', 'laydate', 'layer','element','upload'], function(){
+        var $ = layui.$
+            ,admin = layui.admin
+            ,element = layui.element
+            ,view = layui.view
+            ,table = layui.table
+            ,form = layui.form
+            ,laydate = layui.laydate
+            ,util = layui.util
+            ,layer = layui.layer
+            ,upload = layui.upload;
+        //倒计时
+        layui.setter.menu();
+        $.ajax({
+            url: layui.setter.ServerURL+'time/showaddresstime',
+            contentType: "application/json",
+            method: 'POST',
+            headers:{
+                "token":layui.data('layuiAdmin').access_token,
+            },
+            success: function (res) {
+                if(res){
+                    var date = new Date(res);
+                    setCountdown3(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds());
+                    laydate.render({
+                        elem: '#test3'
+                        ,type: 'datetime'
+                        ,value: new Date(res)
+                        ,done: function(value, date){
+                            setCountdown3(date.year, date.month - 1, date.date, date.hours, date.minutes, date.seconds);
+                            $.ajax({
+                                url: layui.setter.ServerURL+'time/addaddresstime',
+                                contentType: "application/json",
+                                method: 'GET',
+                                data:{"addresstime":value},
+                                headers:{
+                                    "token":layui.data('layuiAdmin').access_token,
+                                },
+                                success: function (res) {
+                                    layer.msg("设置时间成功");
+                                },
+                                error: function () {
+                                    layer.msg("设置时间失败", { icon: 5 });
+                                }});
+                        }
+                    });
+                }else{
+                    layer.msg(res.codeInfo, { icon: 5 });
+                }
+
+            },
+            error: function () {
+                layer.msg("请求时间失败", { icon: 5 });
+            }
+        });
+        $.ajax({
+            url: layui.setter.ServerURL+'time/showposttime',
+            contentType: "application/json",
+            method: 'POST',
+            headers:{
+                "token":layui.data('layuiAdmin').access_token,
+            },
+            success: function (res) {
+                if(res){
+                    var date = new Date(res);
+                    setCountdown1(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds());
+                    laydate.render({
+                        elem: '#test1'
+                        ,type: 'datetime'
+                        ,value: new Date(res)
+                        ,done: function(value, date){
+                            setCountdown1(date.year, date.month - 1, date.date, date.hours, date.minutes, date.seconds);
+                            console.log(2333);
+                            $.ajax({
+                                url: layui.setter.ServerURL+'time/adminUpdateCoursePosttime',
+                                contentType: "application/json",
+                                method: 'GET',
+                                data:{"posttime":value},
+                                headers:{
+                                    "token":layui.data('layuiAdmin').access_token,
+                                },
+                                success: function (res) {
+                                    layer.msg("设置时间成功");
+                                },
+                                error: function () {
+                                    layer.msg("设置时间失败", { icon: 5 });
+                                }});
+                        }
+                    });
+                }else{
+                    layer.msg(res.codeInfo, { icon: 5 });
+                }
+
+            },
+            error: function () {
+                layer.msg("请求时间失败", { icon: 5 });
+            }
+        });
+        var thisTimer1, setCountdown1 = function(y, M, d, H, m, s){
+            console.log(y, M, d, H, m, s);
+            var endTime = new Date(y, M||0, d||1, H||0, m||0, s||0) //结束日期
+                ,serverTime = new Date(); //假设为当前服务器时间，这里采用的是本地时间，实际使用一般是取服务端的
+
+            clearTimeout(thisTimer1);
+            util.countdown(endTime, serverTime, function(date, serverTime, timer){
+                var str = date[0] + '天' + date[1] + '时' +  date[2] + '分' + date[3] + '秒';
+                lay('#test2').html(str);
+                thisTimer1 = timer;
+            });
+        };
+        var thisTimer3, setCountdown3 = function(y, M, d, H, m, s){
+            var endTime = new Date(y, M||0, d||1, H||0, m||0, s||0) //结束日期
+                ,serverTime = new Date(); //假设为当前服务器时间，这里采用的是本地时间，实际使用一般是取服务端的
+            clearTimeout(thisTimer3);
+            util.countdown(endTime, serverTime, function(date, serverTime, timer){
+                var str = date[0] + '天' + date[1] + '时' +  date[2] + '分' + date[3] + '秒';
+                lay('#test4').html(str);
+                thisTimer3 = timer;
+            });
+        };
+        var thisTimer5, setCountdown5 = function(y, M, d, H, m, s){
+            var endTime = new Date(y, M||0, d||1, H||0, m||0, s||0) //结束日期
+                ,serverTime = new Date(); //假设为当前服务器时间，这里采用的是本地时间，实际使用一般是取服务端的
+
+            clearTimeout(thisTimer5);
+            util.countdown(endTime, serverTime, function(date, serverTime, timer){
+                var str = date[0] + '天' + date[1] + '时' +  date[2] + '分' + date[3] + '秒';
+                lay('#test6').html(str);
+                thisTimer5 = timer;
+            });
+        };
+        setCountdown5(2019,12,12);
+        laydate.render({
+            elem: '#test5'
+            ,type: 'datetime'
+            ,done: function(value, date){
+                setCountdown5(date.year, date.month - 1, date.date, date.hours, date.minutes, date.seconds);
+            }
+        });
+    });
+
+</script>

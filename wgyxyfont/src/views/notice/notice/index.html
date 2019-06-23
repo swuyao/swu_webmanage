@@ -1,0 +1,94 @@
+
+
+<title>公告管理</title>
+
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">新建公告</a>
+  </div>
+</div>
+
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-tab" lay-filter="shopList">
+          <div class="layui-card pad15" >
+            <div class="layui-card-header">时间管理</div>
+            <div class="layui-card-body">
+              <div class="layui-form" lay-filter="layuiadmin-form-shopadmin" style="padding: 20px 0 0 0;">
+                <div class="layui-form-item">
+                  <label class="layui-form-label">标题</label>
+                  <div class="layui-input-block">
+                      <input type="text"  name="title"   class="layui-input">
+                      <input type="text"  name="noticemaker" value="admin" style="display: none;"  class="layui-input">
+
+                  </div>
+                </div>
+                <div class="layui-form-item">
+                  <label class="layui-form-label">内容</label>
+                  <div class="layui-input-block">
+                    <textarea name="noticecontent" placeholder="请输入公告内容" lay-verify="required" class="layui-textarea"></textarea>
+                  </div>
+                </div>
+                <div class="layui-form-item">
+                <label class="layui-form-label">公告对象</label>
+                <div class="layui-input-block">
+                  <select  name="type" lay-filter="role" lay-verify="required" class="layui-select">
+                    <option value="0">所有人</option>
+                    <option value="1">学生</option>
+                    <option value="2">指导老师</option>
+                    <option value="3">授课老师</option>
+                    <option value="4">指导老师和授课老师</option>
+                  </select>
+                </div>
+                </div>
+                <div class="layui-form-item">
+                  <label class="layui-form-label"></label>
+                  <div class="layui-input-block">
+                    <input type="button" lay-submit id="changPassword" lay-filter="changPassword" value="发布公告" class="layui-btn">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    layui.use([ 'table','element','upload'], function(){
+        var $ = layui.$
+            ,admin = layui.admin
+            ,element = layui.element
+            ,view = layui.view
+            ,table = layui.table
+            ,form = layui.form
+            ,upload = layui.upload;
+
+        form.render(null, 'layuiadmin-form-shopadmin');
+
+        form.on('submit(changPassword)', function(Fdata){
+            var field = Fdata.field; //获取提交的字段
+            $.ajax({
+                url: layui.setter.ServerURL+'notice/addNotice',
+                contentType: "application/json",
+                data:  JSON.stringify(field), //请求的附加参数，用json对象
+                method: 'POST',
+                headers:{
+                    "token":layui.data('layuiAdmin').access_token,
+                },
+                success: function (res) {
+                    layer.msg("发布成功啦", { icon: 1 });
+                },
+                error: function () {
+                    layer.msg("发布失败", { icon: 5 });
+                }
+            });
+        });
+    });
+
+
+</script>

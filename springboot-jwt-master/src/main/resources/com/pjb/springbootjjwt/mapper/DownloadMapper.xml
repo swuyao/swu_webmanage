@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pjb.springbootjjwt.mapper.DownloadMapper">
+    <insert id="addDownload" parameterType="com.pjb.springbootjjwt.entity.Download">
+        INSERT INTO tb_download(filename,files,filemaker,courseid,filemakername,pdffilename,pdffiles)
+        values(#{filename},#{files},#{filemaker},#{courseid},#{filemakername},#{pdffilename},#{pdffiles});
+    </insert>
+
+    <update id="updateDownload" parameterType="com.pjb.springbootjjwt.entity.Download">
+
+            UPDATE tb_download
+            set filename=#{filename},files=#{files},
+            pdffilename=#{pdffilename},pdffiles=#{pdffiles}
+            WHERE filemaker=#{filemaker} AND courseid=#{courseid}
+
+
+    </update>
+
+    <select id="findAllDownload" resultType="com.pjb.springbootjjwt.entity.Download">
+        SELECT *
+        FROM
+        tb_download
+    </select>
+
+    <select id="showHomeworkList" resultType="com.pjb.springbootjjwt.entity.DownloadAndSc">
+        SELECT d.*,s.state,s.remark,s.score
+
+        FROM
+        tb_download d,tb_sc s
+        WHERE
+         d.courseid=#{courseid} AND d.courseid=s.courseid AND d.filemaker=s.studentnumber
+    </select>
+
+
+    <select id="findOneDownload" resultType="com.pjb.springbootjjwt.entity.Download">
+        SELECT *
+        FROM
+        tb_download
+        WHERE
+        filemaker=#{filemaker} AND courseid=#{courseid}
+    </select>
+
+
+</mapper>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pjb.springbootjjwt.mapper.TeacherMapper">
+    <!--查找所有老师信息-->
+    <select id="findAllTeacher" resultType="com.pjb.springbootjjwt.entity.Teacher">
+        SELECT *
+        FROM
+        tb_teacher
+    </select>
+
+    <!--根据用户校园卡号查找老师-->
+    <select id="findByTeanumber" resultType="com.pjb.springbootjjwt.entity.Teacher">
+        SELECT * FROM tb_teacher
+        where
+        teachernumber=#{teachernumber}
+    </select>
+
+    <!--根据用户名查找老师-->
+    <select id="findByTeaname" resultType="com.pjb.springbootjjwt.entity.Teacher">
+        SELECT * FROM tb_teacher
+        where
+        teaname=#{teaname}
+    </select>
+
+    <!--添加老师-->
+    <insert id="addTeacher" parameterType="com.pjb.springbootjjwt.entity.Teacher">
+        insert into
+        tb_teacher(teachernumber,teaname,teacourse)
+        values(#{teachernumber},#{teaname},#{teacourse});
+    </insert>
+
+    <!--根据校园卡号删除老师-->
+    <delete id="deleteTeacher">
+        delete from
+        tb_teacher where teachernumber=#{teachernumber};
+    </delete>
+    <!--更新老师的课程-->
+    <update id="updateTeacherCourse" parameterType="com.pjb.springbootjjwt.entity.Teacher">
+        UPDATE tb_teacher,tb_course
+        set tb_teacher.teacourse=#{teacourse},tb_course.skteacher=#{teachernumber}
+        WHERE tb_teacher.teachernumber=#{teachernumber} AND tb_course.courseid= #{teacourse};
+
+    </update>
+
+
+    <update id="updateTeacher" parameterType="com.pjb.springbootjjwt.entity.Teacher">
+        UPDATE tb_teacher
+        set teaname=#{teaname}
+        WHERE  teachernumber=#{teachernumber};
+
+    </update>
+
+    <!--查找老师的所有学生-->
+    <select id="findMyStu" resultType="com.pjb.springbootjjwt.entity.Student">
+        select s.* from tb_student s ,tb_sc sc1,tb_course c,tb_teacher t
+        where s.studentnumber=sc1.studentnumber and sc1.courseid=c.courseid and c.courseid=t.teacourse and t.teaname=#{teaname};
+    </select>
+
+
+    <select id="selectByStunumberReturnCount" resultType="java.lang.Integer">
+        SELECT
+        count(*)
+        FROM tb_teacher
+        WHERE teachernumber=#{teachernumber}
+    </select>
+
+    <!--查找老师的所有课程-->
+    <select id="findCourseByTeachernumber" resultType="com.pjb.springbootjjwt.entity.Course">
+        select * from tb_course c,tb_teacher t
+        WHERE
+        c.skteacher=t.teachernumber AND t.teachernumber=#{teachernumber}
+    </select>
+
+
+
+
+</mapper>

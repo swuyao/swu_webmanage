@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pjb.springbootjjwt.mapper.SuggestMapper">
+   <!--新建一条通知-->
+    <insert id="sentSuggest" parameterType="com.pjb.springbootjjwt.entity.suggest">
+        INSERT INTO tb_suggest(name,role,suggest)
+        values(#{name},#{role},#{suggest});
+    </insert>
+    <!--查看所有建议-->
+    <select id="looklook" resultType="com.pjb.springbootjjwt.entity.suggest">
+        SELECT *
+        FROM
+        tb_suggest
+
+    </select>
+
+</mapper>

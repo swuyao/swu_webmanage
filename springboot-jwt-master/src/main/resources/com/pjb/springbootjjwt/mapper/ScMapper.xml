@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pjb.springbootjjwt.mapper.ScMapper">
+
+
+    <!--根据学生查找课程和分数-->
+    <select id="findByStu" resultType="com.pjb.springbootjjwt.entity.Sc">
+        SELECT * FROM tb_sc
+        where
+        studentnumber=#{studentnumber}
+    </select>
+
+    <!--选课-->
+    <insert id="addSc" parameterType="com.pjb.springbootjjwt.entity.Sc">
+        insert into
+        tb_sc(studentnumber,courseid)
+        values(#{studentnumber},#{courseid});
+    </insert>
+
+    <!--评分-->
+    <update id="score" parameterType="com.pjb.springbootjjwt.entity.Sc">
+        UPDATE tb_sc
+        set score=#{score},remark=#{remark},state=#{state}
+        WHERE studentnumber=#{studentnumber} AND courseid=#{courseid};
+
+    </update>
+
+    <!--根据学生查找课程和分数-->
+    <select id="findByStuCou" resultType="com.pjb.springbootjjwt.entity.Sc">
+        SELECT * FROM tb_sc
+        where
+        studentnumber=#{studentnumber} AND courseid=#{courseid}
+    </select>
+
+
+    <!--根据校园卡号获取成绩-->
+    <select id="showScore" parameterType="com.pjb.springbootjjwt.entity.Student" resultType="com.pjb.springbootjjwt.entity.Sc">
+        SELECT courseid,score,state,year,homework,remark FROM tb_sc
+        where
+        studentnumber=#{studentnumber}
+    </select>
+    <!--上传作业-->
+    <update id="homework" parameterType="com.pjb.springbootjjwt.entity.Sc">
+        UPDATE tb_sc
+        set homework=#{homework},pdfpath =#{pdfpath}
+        WHERE courseid=#{courseid} AND studentnumber=#{studentnumber}
+
+    </update>
+
+    <!--更新通过与否-->
+    <update id="setState" parameterType="com.pjb.springbootjjwt.entity.Sc">
+        UPDATE tb_sc
+        set state=#{state}
+        WHERE courseid=#{courseid} AND studentnumber=#{studentnumber}
+
+    </update>
+
+    <!--书写评语-->
+    <update id="wirteRemark" parameterType="com.pjb.springbootjjwt.entity.Sc">
+        UPDATE tb_sc
+        set remark=#{remark}
+        WHERE courseid=#{courseid} AND studentnumber=#{studentnumber}
+
+    </update>
+
+    <!--查找学生的所有课程-->
+    <select id="findALLByStudentnumber" resultType="com.pjb.springbootjjwt.entity.ScAndCourse">
+        SELECT s.*,c.*,t.teaname
+        FROM
+        tb_sc s,tb_course c,tb_teacher t
+        WHERE
+       t.teacourse=c.courseid AND c.courseid=s.courseid    AND  s.studentnumber=#{studentnumber}
+    </select>
+
+    <!--查找课程未提交人数-->
+    <select id="findNotPost" resultType="java.lang.Integer">
+        SELECT count(*)
+        FROM
+        tb_sc
+        WHERE
+        homework="" and courseid=#{courseid}
+    </select>
+
+    <!--查找课程总人数-->
+    <select id="showstudentcount" resultType="java.lang.Integer">
+        SELECT count(*)
+        FROM
+        tb_sc
+        WHERE
+         courseid=#{courseid}
+    </select>
+
+    <!--查找课程未提交作业的学号-->
+    <select id="findNotPostStudentNumber" resultType="java.lang.String">
+        SELECT studentnumber
+        FROM
+        tb_sc
+        WHERE
+        homework="" and courseid=#{courseid}
+    </select>
+
+
+
+
+
+
+
+
+
+
+</mapper>

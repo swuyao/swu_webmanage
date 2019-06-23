@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pjb.springbootjjwt.mapper.NoticeMapper">
+   <!--新建一条通知-->
+    <insert id="addNotice" parameterType="com.pjb.springbootjjwt.entity.Notice">
+        INSERT INTO tb_notice(title,noticecontent,noticemaker,type)
+        values(#{title},#{noticecontent},#{noticemaker},#{type});
+    </insert>
+    <!--根据时间排序列出所有标题-->
+    <select id="findAllTitle" resultType="com.pjb.springbootjjwt.entity.Notice">
+        SELECT * FROM tb_notice
+    </select>
+    <!--根据标题查询详细通知-->
+    <select id="findByTitle" resultType="com.pjb.springbootjjwt.entity.Notice">
+        SELECT * FROM tb_notice
+        where
+        title=#{title}
+    </select>
+    <!--推送最新通知-->
+    <select id="findNewestNotice" resultType="com.pjb.springbootjjwt.entity.Notice">
+        select * from tb_notice order by id DESC limit 1;
+    </select>
+
+    <!--删除一条通知-->
+    <delete id="deleteNotice" >
+        DELETE  from tb_notice WHERE title=#{title};
+    </delete>
+
+    <!--根据时间排序列出所有role对应的通知-->
+    <select id="showNoticeByRole" resultType="com.pjb.springbootjjwt.entity.Notice">
+        SELECT * FROM tb_notice n,tb_noticetype t
+        WHERE
+        t.type=n.type AND role=#{role}
+
+    </select>
+
+</mapper>

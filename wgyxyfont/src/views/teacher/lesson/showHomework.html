@@ -1,0 +1,57 @@
+<script type="text/html" template>
+<iframe src="{{ d.params.pdffiles }}"   frameborder="0" height="100%" width="100%">
+  该浏览器不支持在线预览，请点击下载 <a href="{{ d.params.pdffiles }}" ></a>
+</iframe>
+</script>
+
+<div class="layui-form" lay-filter="layuiadmin-form-shopadmin" style="padding: 20px 20px 0 0;">
+  <div class="layui-form-item">
+    <label class="layui-form-label">状态</label>
+    <div class="layui-input-block">
+      <select  name="state" lay-filter="state" lay-verify="required" class="layui-select">
+        <option value="">请选择状态</option>
+        <option value="修改后通过">修改后通过</option>
+        <option value="已通过">已通过</option>
+        <option value="未通过">未通过</option>
+      </select>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">评分</label>
+    <div class="layui-input-block">
+      <script type="text/html" template>
+        <input type="text" value="" name="score"  lay-verify="required" class="layui-input">
+      </script>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">评语</label>
+    <div class="layui-input-block">
+      <script type="text/html" template>
+        <input type="text" value="{{ d.params.filemaker || '0' }}" name="studentnumber"  style="display: none" class="layui-input">
+        <input type="text" value="{{ d.params.courseid}}" name="courseid"  style="display: none" class="layui-input">
+        <textarea name="remark" placeholder="请输入评语" lay-verify="required" class="layui-textarea"></textarea>
+      </script>
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <div class="layui-input-inline">
+      <input type="button" lay-submit id="LAY-shop-front-submit" lay-filter="LAY-shop-front-submit" value="评价" class="layui-btn">
+    </div>
+  </div>
+</div>
+
+<script>
+    function changeFrameHeight(){
+        var iframe = document.getElementById("frame_content");
+
+        try{
+            iframe.height = iframe.contentWindow.document.documentElement.scrollHeight;
+
+        }catch (ex){
+            console.log(ex)
+        }
+    }
+</script>

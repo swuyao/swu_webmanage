@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pjb.springbootjjwt.mapper.TimeMapper">
+    <!--展示提交作业的时间-->
+    <select id="showPostTime" resultType="java.util.Date">
+        SELECT posttime
+        FROM
+        tb_time
+        WHERE
+        posttime>0
+        order by id DESC limit 1;
+
+    </select>
+
+    <!--展示提交论文的时间-->
+    <select id="showTheisTime" resultType="java.util.Date">
+        SELECT theistime
+        FROM
+        tb_time
+        WHERE
+        theistime>0
+        order by id DESC limit 1;
+
+    </select>
+    <!--展示提交邮寄地址的时间-->
+    <select id="showAddressTime" resultType="java.util.Date">
+        SELECT addresstime
+        FROM
+        tb_time
+        WHERE
+        addresstime
+        order by id DESC limit 1;
+
+    </select>
+    <insert id="addTheisTime" parameterType="java.util.Date">
+        INSERT INTO
+        tb_time(theistime)
+        VALUES (#{theistime})
+
+    </insert>
+
+    <insert id="addAddressTime" parameterType="java.util.Date">
+        INSERT INTO
+        tb_time(addresstime)
+        VALUES (#{addresstime})
+
+    </insert>
+
+    <insert id="addPostTime" parameterType="java.util.Date">
+        INSERT INTO
+        tb_time(posttime)
+        VALUES (#{posttime})
+
+    </insert>
+
+
+
+
+
+
+
+</mapper>

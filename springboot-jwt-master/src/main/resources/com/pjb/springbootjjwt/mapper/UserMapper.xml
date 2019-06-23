@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pjb.springbootjjwt.mapper.UserMapper">
+    <!--根据用户名查找用户-->
+    <select id="findByUsername" resultType="com.pjb.springbootjjwt.entity.User">
+      SELECT * FROM tb_user
+      where
+      username=#{username}
+    </select>
+    <!--根据用户校园卡号查找用户-->
+    <select id="findByStunumber" resultType="com.pjb.springbootjjwt.entity.User">
+        SELECT * FROM tb_user
+      where
+      stunumber = #{stunumber}
+    </select>
+
+    <!--根据角色查找用户-->
+    <select id="findByRole" resultType="com.pjb.springbootjjwt.entity.User">
+        SELECT * FROM tb_user
+        where
+        role=#{role}
+    </select>
+    <!--添加用户-->
+    <insert id="adduser" parameterType="com.pjb.springbootjjwt.entity.User">
+        insert into
+        tb_user(stunumber,username,idcards,role)
+        values(#{stunumber},#{username},#{idcards},#{role});
+    </insert>
+    <!--重置密码-->
+    <update id="Resetpassword" parameterType="com.pjb.springbootjjwt.entity.User">
+        UPDATE tb_user
+        set password=#{newpassword}
+        WHERE stunumber=#{stunumber};
+
+    </update>
+    <!--根据用户身份证号码和校园卡号查找用户-->
+    <select id="findByStunumberAndIDcar" resultType="com.pjb.springbootjjwt.entity.User">
+        SELECT * FROM tb_user
+        where
+        (stunumber=#{stunumber}) AND (idcards=#{idcards});
+    </select>
+    <!--更新用户权限-->
+    <update id="Updateuserrole" parameterType="com.pjb.springbootjjwt.entity.User">
+        UPDATE tb_user
+        set role=#{role}
+        WHERE stunumber=#{stunumber};
+
+    </update>
+
+    <update id="updateuser" parameterType="com.pjb.springbootjjwt.entity.User">
+        UPDATE tb_user
+        set role=#{role},username=#{username},idcards=#{idcards}
+        WHERE stunumber=#{stunumber};
+
+    </update>
+
+    <!--更新token-->
+    <update id="updatetoken" parameterType="com.pjb.springbootjjwt.entity.User">
+        UPDATE tb_user
+        set token=#{token}
+        WHERE stunumber=#{stunumber};
+
+    </update>
+    <!--查找所有用户-->
+    <select id="findAllUser" resultType="com.pjb.springbootjjwt.entity.User">
+        SELECT stunumber,username,idcards, role FROM tb_user
+
+    </select>
+
+    <!--删除用户-->
+    <delete id="deleteUser">
+        delete from
+        tb_user where stunumber=#{stunumber};
+    </delete>
+
+    <select id="selectByStunumberReturnCount" resultType="java.lang.Integer">
+        SELECT
+        count(*)
+        FROM tb_user
+        WHERE stunumber=#{stunumber}
+    </select>
+
+    <select id="selectStunumberBytoken" resultType="java.lang.String">
+        SELECT
+        stunumber
+        FROM tb_user
+        WHERE token=#{token}
+    </select>
+
+    <select id="selectNameBytoken" resultType="java.lang.String">
+        SELECT
+        username
+        FROM tb_user
+        WHERE token=#{token}
+    </select>
+
+    <select id="selectRoleBytoken" resultType="java.lang.String">
+        SELECT
+        role
+        FROM tb_user
+        WHERE token=#{token}
+    </select>
+
+</mapper>

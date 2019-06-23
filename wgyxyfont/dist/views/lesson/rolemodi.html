@@ -1,0 +1,34 @@
+
+
+<div class="layui-form" lay-filter="layuiadmin-form-shopadmin" style="padding: 20px 0 0 0;">
+  <div class="layui-form-item">
+    <label class="layui-form-label">校园卡号</label>
+    <div class="layui-input-inline">
+      <script type="text/html" template>
+        <input type="text" value="{{ d.params.stunumber || '0' }}" name="stunumber"  readonly class="layui-input">
+      </script>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">角色</label>
+    <div class="layui-input-inline">
+      <select  name="role"  lay-verify="required" class="layui-select">
+        <option value="">请选择角色</option>
+        <option value="student">学生</option>
+        <option value="skteacher">授课老师</option>
+        <option value="zdteacher">指导老师</option>
+        <option value="admin">管理员</option>
+      </select>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <div class="layui-input-inline">
+      <input type="button" lay-submit id="LAY-shop-front-submit" lay-filter="LAY-shop-front-submit" value="修改" class="layui-btn">
+    </div>
+  </div>
+</div>
+
+<script>
+
+</script>

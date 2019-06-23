@@ -1,0 +1,114 @@
+
+
+<title>公告管理</title>
+
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a >公告管理</a>
+  </div>
+</div>
+
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-tab" lay-filter="shopList">
+          <div class="layui-card pad15" >
+            <div class="layui-card-header">选课</div>
+            <div class="layui-card-body">
+              <button class="layui-btn layuiadmin-btn-useradmin" id="upload" style="display: none;">导入数据</button>
+              <table id="LAY-menber"  lay-filter="LAY-menber"></table>
+              <script type="text/html" id="table-menber-webuser">
+                <a class="layui-btn layui-btn-normal layui-btn-xs upload" lay-event="modi" ><i class="layui-icon"></i>选课</a>
+              </script>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    Date.prototype.format = function(format) {
+        var o = {
+            "M+" : this.getMonth() + 1,// month
+            "d+" : this.getDate(),// day
+            "h+" : this.getHours(),// hour
+            "m+" : this.getMinutes(),// minute
+            "s+" : this.getSeconds(),// second
+            "q+" : Math.floor((this.getMonth() + 3) / 3),// quarter
+            "S" : this.getMilliseconds()
+            // millisecond
+        };
+        if (/(y+)/.test(format) || /(Y+)/.test(format)) {
+            format = format.replace(RegExp.$1, (this.getFullYear() +
+                "").substr(4 - RegExp.$1.length));
+        }
+        for ( var k in o) {
+            if (new RegExp("(" + k + ")").test(format)) {
+                format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
+            }
+        }
+        return format;
+    };
+    layui.use([ 'table','element','upload'], function(){
+        var $ = layui.$
+            ,admin = layui.admin
+            ,element = layui.element
+            ,view = layui.view
+            ,table = layui.table
+            ,form = layui.form
+            ,upload = layui.upload;
+        layui.setter.menu();
+
+        var data = {"coursename":"","deletenumber":"","addnumber":"","updatenumber":"","number":"","newcoursename":"","newnumber":"","newskteacher":""}
+        table.render({
+            elem: '#LAY-menber'
+            ,url: layui.setter.ServerURL+'course/findAllCourse'
+            ,page:  true
+            ,where: data
+            ,method:'get'
+            ,headers:{
+                "token":layui.data('layuiAdmin').access_token,
+            },cols: [[ //表头
+                {field: 'courseid', title: '课程编号'},
+                {field: 'coursename', title: '课程名'},
+                {field: 'skteacher', title: '教师编号'},
+                {field: 'teaname', title: '教师名'},
+                {title: '操作', width: 150, align:'center', fixed: 'right', toolbar: '#table-menber-webuser'}
+            ]],request: {
+                pageName: 'pageNum' //页码的参数名称，默认：page
+                ,limitName: 'pageSize' //每页数据量的参数名，默认：limit
+            }
+        });
+
+        table.on('tool(LAY-menber)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'modi'){
+                console.log(data);
+                $.ajax({
+                    url: layui.setter.ServerURL+'sc/addSc',
+                    contentType: "application/json",
+                    method: 'GET',
+                    data:data,
+                    cache:false,
+                    async:false,
+                    headers:{
+                        "token":layui.data('layuiAdmin').access_token
+                    },
+                    success: function (res) {
+                        if(res){
+                            layer.msg("选课成功");
+                        }
+                    },
+                    error: function () {
+                        layer.msg("选课失败", { icon: 5 });
+                    }
+                });
+
+            }
+        });
+    });
+
+</script>

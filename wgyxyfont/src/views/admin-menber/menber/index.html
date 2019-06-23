@@ -1,0 +1,200 @@
+
+
+<title>商品管理</title>
+
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">人员管理</a>
+    <a ><cite>学生管理</cite></a>
+  </div>
+</div>
+
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-tab" lay-filter="shopList">
+          <div class="layui-card pad15" >
+            <div class="layui-card-header">人员列表</div>
+            <div class="layui-card-body">
+              <div style="padding-bottom: 10px;" class="layui-form" lay-filter="layuiadmin-form-categoryadmin">
+
+                <div class="layui-form-item">
+                  <div class="layui-input-inline">
+                    <button class="layui-btn layuiadmin-btn-useradmin" id="upload">导入数据</button>
+                  </div>
+                  <label class="layui-form-label">角色</label>
+                  <div class="layui-input-inline">
+                    <select  name="role" lay-filter="role" lay-verify="required" class="layui-select">
+                      <option value="">请选择角色</option>
+                      <option value="student">学生</option>
+                      <option value="skteacher">授课老师</option>
+                      <option value="zdteacher">指导老师</option>
+                      <option value="admin">管理员</option>
+                    </select>
+                  </div>
+                  <label class="layui-form-label">校园卡号</label>
+                  <div class="layui-input-inline">
+                    <input type="text"id="stunumber2"  lay-filter="stunumber" name="stunumber" lay-verify="required" value="" autocomplete="off" class="layui-input"/>
+                  </div>
+                </div>
+              </div>
+
+              <table id="LAY-menber"  lay-filter="LAY-menber"></table>
+              <script type="text/html" id="table-menber-webuser">
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="modi"><i class="layui-icon"></i>修改权限</a>
+              </script>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    layui.use([ 'table','element','upload'], function(){
+        var $ = layui.$
+            ,admin = layui.admin
+            ,element = layui.element
+            ,view = layui.view
+            ,table = layui.table
+            ,form = layui.form
+            ,upload = layui.upload;
+        var data = {"stunumber":"","role":"","deletenumber":"","addnumber":"","updatenumber":"","updaterolenumber":"","newstunumber":"","newusername":"","newusername":"","newidcard":"","newrole":""}
+        var shopId = "";
+        var categoryList = {};
+        layui.setter.menu();
+        form.render(null, 'layuiadmin-form-categoryadmin');
+        form.on('select(role)', function(data){
+            var role = data.value;
+            table.reload('LAY-menber', {
+                where: {
+                    role: role
+                }
+            });
+        });
+
+        $("#stunumber2").bind("input propertychange", function () {
+            var stunumber = $("#stunumber2").val();
+            table.reload('LAY-menber', {
+                where: {
+                    stunumber: stunumber
+                }
+            });
+        });
+
+        table.render({
+            elem: '#LAY-menber'
+            ,url: layui.setter.ServerURL+'user/findAllUser'
+            ,page:  true
+            ,where: data
+            ,method:'get'
+            ,headers:{
+                "token":layui.data('layuiAdmin').access_token,
+            },cols: [[ //表头
+                {field: 'stunumber', title: '校园卡号'},
+                {field: 'username', title: '用户名'},
+                {field: 'idcards', title: '身份证号'},
+                {field: 'role', title: '角色',templet: function(d){
+                        if(d.role == "skteacher"){
+                            return "授课老师";
+                        }else if(d.role == "zdteacher"){
+                            return "指导老师";
+                        }else if(d.role == "admin"){
+                            return "管理员";
+                        }else{
+                            return  "学生";
+                        }
+                    }},
+                {title: '操作', width: 150, align:'center', fixed: 'right', toolbar: '#table-menber-webuser'}
+            ]],request: {
+                pageName: 'pageNum' //页码的参数名称，默认：page
+                ,limitName: 'pageSize' //每页数据量的参数名，默认：limit
+            }
+        });
+        table.render({
+            elem: '#LAY-student'
+            ,url: layui.setter.ServerURL+'user/findByRole'
+            ,page:  true
+            ,where: data
+            ,method:'get'
+            ,headers:{
+                "token":layui.data('layuiAdmin').access_token,
+            },cols: [[ //表头
+                {field: 'stunumber', title: '校园卡号'},
+                {field: 'username', title: '用户名'},
+                {field: 'idcards', title: '身份证号'},
+                {field: 'role', title: '角色',templet: function(d){
+                        if(d.role == "skteacher"){
+                            return "授课老师";
+                        }else if(d.role == "zdteacher"){
+                            return "指导老师";
+                        }else if(d.role == "admin"){
+                            return "管理员";
+                        }else{
+                            return  "学生";
+                        }
+                    }},
+                {title: '操作', width: 150, align:'center', fixed: 'right', toolbar: '#table-menber-webuser'}
+            ]],request: {
+                pageName: 'pageNum' //页码的参数名称，默认：page
+                ,limitName: 'pageSize' //每页数据量的参数名，默认：limit
+            }
+        });
+        upload.render({
+            elem: '#upload'
+            ,accept: 'file'
+            ,headers:{
+                "token":layui.data('layuiAdmin').access_token,
+            },url: layui.setter.ServerURL+'user/import'
+            ,done: function(res){
+                layer.msg(res);
+            }
+            ,error: function(){
+                layer.msg('上传失败');
+            }
+        });
+        table.on('tool(LAY-menber)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'modi'){
+                admin.popup({
+                    title: '修改权限'
+                    , area: ['400px', '450px']
+                    , id: 'LAY-popup-shop-add'
+                    , success: function (layero, index) {
+                        view(this.id).render('admin-menber/rolemodi', data).done(function () {
+                            form.render(null, 'layuiadmin-form-shopadmin');
+                            //监听提交
+                            form.on('submit(LAY-shop-front-submit)', function (data) {
+                                data.field["access_token"] = layui.data('layuiAdmin').access_token;
+                                var data = data.field;
+                                $.ajax({
+                                    url: layui.setter.ServerURL + 'user/Updateuserrole',
+                                    contentType: "application/json",
+                                    headers:{"token":layui.data('layuiAdmin').access_token},
+                                    data: data, //请求的附加参数，用json对象
+                                    method: 'GET',
+                                    success: function (res) {
+                                        if (res == true) {
+                                            layer.close(index); //执行关闭
+                                            layer.msg("修改成功啦", {icon: 1});
+                                            layui.table.reload('LAY-menber'); //重载表格
+                                            layui.table.reload('LAY-student'); //重载表格
+                                        } else {
+                                            layer.msg("修改失败", {icon: 2});
+                                        }
+                                    },
+                                    error: function () {
+                                        layer.msg("修改失败", {icon: 5});
+                                    }
+                                });
+                            });
+                        });
+                    }
+                })
+            }
+        });
+    });
+
+</script>

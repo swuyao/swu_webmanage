@@ -1,0 +1,144 @@
+
+
+<title>公告管理</title>
+
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">公告管理</a>
+  </div>
+</div>
+
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-tab" lay-filter="shopList">
+          <div class="layui-card pad15" >
+            <div class="layui-card-header">历史公告</div>
+            <div class="layui-card-body">
+              <table id="LAY-menber"  lay-filter="LAY-menber"></table>
+              <script type="text/html" id="table-menber-webuser">
+
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="modi"><i class="layui-icon"></i>详情</a>
+              </script>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    Date.prototype.format = function(format) {
+        var o = {
+            "M+" : this.getMonth() + 1,// month
+            "d+" : this.getDate(),// day
+            "h+" : this.getHours(),// hour
+            "m+" : this.getMinutes(),// minute
+            "s+" : this.getSeconds(),// second
+            "q+" : Math.floor((this.getMonth() + 3) / 3),// quarter
+            "S" : this.getMilliseconds()
+            // millisecond
+        };
+        if (/(y+)/.test(format) || /(Y+)/.test(format)) {
+            format = format.replace(RegExp.$1, (this.getFullYear() +
+                "").substr(4 - RegExp.$1.length));
+        }
+        for ( var k in o) {
+            if (new RegExp("(" + k + ")").test(format)) {
+                format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
+            }
+        }
+        return format;
+    };
+    layui.use([ 'table','element','upload'], function(){
+        var $ = layui.$
+            ,admin = layui.admin
+            ,element = layui.element
+            ,view = layui.view
+            ,table = layui.table
+            ,form = layui.form
+            ,upload = layui.upload;
+        var data = {"coursename":"","deletenumber":"","addnumber":"","updatenumber":"","number":"","newcoursename":"","newnumber":"","newskteacher":""}
+        layui.setter.menu();
+        form.render(null, 'layuiadmin-form-categoryadmin');
+        form.on('select(role)', function(data){
+            var role = data.value;
+            if(role){
+                table.reload('LAY-student', {
+                    where: {
+                        role: role
+                    }
+                });
+            }
+        });
+        $(document).on('click','#add',function(){
+
+        });
+        table.render({
+            elem: '#LAY-menber'
+            ,url: layui.setter.ServerURL+'notice/findAllTitle'
+            ,page:  true
+            ,where: data
+            ,method:'get'
+            ,headers:{
+                "token":layui.data('layuiAdmin').access_token,
+            },cols: [[ //表头
+                {field: 'title', title: '标题'},
+                {field: 'noticecontent', title: '内容'},
+                {field: 'noticemaker', title: '作者'},
+                {field: 'noticedate', title: '时间',templet: function(d){
+                        var date = new Date(d.noticedate).format("yyyy-MM-dd hh:mm:ss");
+                        return date;
+                    }},
+                {title: '操作', width: 150, align:'center', fixed: 'right', toolbar: '#table-menber-webuser'}
+            ]],request: {
+                pageName: 'pageNum' //页码的参数名称，默认：page
+                ,limitName: 'pageSize' //每页数据量的参数名，默认：limit
+            }
+        });
+        table.on('tool(LAY-menber)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'modi'){
+                admin.popup({
+                    title: '修改权限'
+                    , area: ['400px', '450px']
+                    , id: 'LAY-popup-shop-add'
+                    , success: function (layero, index) {
+                        view(this.id).render('admin-menber/rolemodi', data).done(function () {
+                            form.render(null, 'layuiadmin-form-shopadmin');
+                            //监听提交
+                            form.on('submit(LAY-shop-front-submit)', function (data) {
+                                data.field["access_token"] = layui.data('layuiAdmin').access_token;
+                                var data = data.field;
+                                $.ajax({
+                                    url: layui.setter.ServerURL + 'user/Updateuserrole',
+                                    contentType: "application/json",
+                                    headers:{"token":layui.data('layuiAdmin').access_token},
+                                    data: data, //请求的附加参数，用json对象
+                                    method: 'GET',
+                                    success: function (res) {
+                                        if (res == true) {
+                                            layer.close(index); //执行关闭
+                                            layer.msg("修改成功啦", {icon: 1});
+                                            layui.table.reload('LAY-menber'); //重载表格
+                                            layui.table.reload('LAY-student'); //重载表格
+                                        } else {
+                                            layer.msg("修改失败", {icon: 2});
+                                        }
+                                    },
+                                    error: function () {
+                                        layer.msg("修改失败", {icon: 5});
+                                    }
+                                });
+                            });
+
+                        });
+                    }
+                })
+            }
+        });
+    });
+
+</script>

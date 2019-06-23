@@ -1,0 +1,12 @@
+{
+  "code": 0
+  ,"msg": ""
+  ,"data": [{
+    "itemname":"康师傅红烧牛肉面",
+    "price":15,
+    "base":12,
+    "shippingFee":10,
+    "type":"晚餐",
+    "pic":"早餐"
+  }]
+}

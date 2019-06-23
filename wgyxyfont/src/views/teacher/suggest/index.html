@@ -1,0 +1,65 @@
+
+
+<title>学生中心</title>
+
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">建议</a>
+  </div>
+</div>
+
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12" id="info">
+      <div class="layui-card"><div class="layui-card-header">提交建议</div>
+        <div class="layui-card-body" pad15>
+          <div class="layui-form" lay-filter="">
+            <div class="layui-form-item">
+                <label class="layui-form-label">建议</label>
+                <div class="layui-input-block">
+                  <textarea name="suggest" placeholder="请输入建议" class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label"></label>
+              <div class="layui-input-inline">
+                <input type="button" lay-submit  lay-filter="changPassword" value="提交建议" class="layui-btn">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+    layui.use([ 'table','element','upload'], function(){
+        var $ = layui.$
+            ,admin = layui.admin
+            ,element = layui.element
+            ,view = layui.view
+            ,table = layui.table
+            ,form = layui.form
+            ,upload = layui.upload;
+        layui.setter.menu();
+        form.on('submit(changPassword)', function(Fdata){
+            var field = Fdata.field; //获取提交的字段
+            $.ajax({
+                url: layui.setter.ServerURL+'suggest/sentSuggest',
+                contentType: "application/json",
+                data:  JSON.stringify(field), //请求的附加参数，用json对象
+                method: 'POST',
+                headers:{
+                    "token":layui.data('layuiAdmin').access_token,
+                },
+                success: function (res) {
+                    layer.msg("提交成功啦", { icon: 1 });
+                },
+                error: function () {
+                    layer.msg("提交失败", { icon: 5 });
+                }
+            });
+        });
+    });
+
+</script>

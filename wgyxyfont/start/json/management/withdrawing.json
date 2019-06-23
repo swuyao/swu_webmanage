@@ -1,0 +1,11 @@
+{
+  "code": 0
+  ,"msg": ""
+  ,"data": [{
+  "name":"桃园小卖部",
+  "school":"西南大学",
+  "balance":"1098.50",
+  "history":"901231.20",
+  "applicationTime":"2018-9-16 16:31"
+  }]
+}

@@ -1,0 +1,118 @@
+
+  <script type="text/html" template>
+    <link rel="stylesheet" type="text/css" href="{{ layui.setter.base }}lib/some/css/normalize.css" />
+    <link rel="stylesheet" type="text/css" href="{{ layui.setter.base }}lib/some/css/demo.css" />
+    <link rel="stylesheet" href="{{ layui.setter.base }}lib/some/js/vendor/jgrowl/css/jquery.jgrowl.min.css">
+
+    <link rel="stylesheet" type="text/css" href="{{ layui.setter.base }}lib/some/css/component.css" />
+
+    </script>
+
+    <style>
+    input::-webkit-input-placeholder{
+        color:rgba(0, 0, 0, 0.726);
+    }
+    input::-moz-placeholder{   /* Mozilla Firefox 19+ */
+        color:rgba(0, 0, 0, 0.726);
+    }
+    input:-moz-placeholder{    /* Mozilla Firefox 4 to 18 */
+        color:rgba(0, 0, 0, 0.726);
+    }
+    input:-ms-input-placeholder{  /* Internet Explorer 10-11 */
+        color:rgba(0, 0, 0, 0.726);
+    }
+    </style>
+
+
+    <div class="container demo-1">
+        <div class="content">
+        <div id="large-header" class="large-header">
+        <canvas id="demo-canvas"></canvas>
+        <div class="logo_box">
+        <h3>外国语学院管理系统</h3>
+    <form action="#" name="f" method="post">
+        <div class="input_outer">
+        <span class="u_user"></span>
+        <input id="logname" name="logname" class="text" style="color: #000000 !important" type="text" placeholder="请输入账户">
+        </div>
+        <div class="input_outer">
+        <span class="us_uer"></span>
+        <input id="logpass" name="logpass" class="text" style="color: #000000 !important; position:absolute; z-index:100;"value="" type="password" placeholder="请输入密码">
+        </div>
+        <div id="LOGIN" class="mb2"><a class="act-but submit" href="javascript:;" onclick="login()" style="color: #FFFFFF">登录</a></div>
+    </form>
+    </div>
+    </div>
+    </div>
+    </div><!-- /container -->
+    <script src="./layui/js/TweenLite.min.js"></script>
+  <script src="./layui/js/EasePack.min.js"></script>
+  <script src="./layui/js/jquery.js"></script>
+  <script src="./layui/js/rAF.js"></script>
+  <script src="./layui/js/demo-1.js"></script>
+  <script src="./layui/js/vendor/jgrowl/jquery.jgrowl.min.js"></script>
+  <!--<script src="./layui/js/Longin.js"></script>-->
+
+    <div style="text-align:center;">
+        </div>
+
+ry
+  <script>
+      layui.use([ 'form'], function(){
+          var setter = layui.setter
+              ,form = layui.form
+              ,router = layui.router()
+              ,$ = layui.$
+              ,search = layui.search;
+          form.render();
+
+
+          //提交
+          window.login = function(){
+              var stunumber = $("#logname").val();
+              var password = $("#logpass").val();
+              var data = JSON.stringify({"stunumber":stunumber,"password":password});
+              console.log(data);
+              $.ajax({
+                  url: layui.setter.ServerURL+'user/login',
+                  contentType: "application/json",
+                  data:  data, //请求的附加参数，用json对象
+                  method: 'POST',
+                  success: function (res) {
+                      //请求成功后，写入 access_token
+                      if(res.message) {
+                          layer.msg(res.message, { icon: 5 });
+                      }else{
+                          layui.data(setter.tableName, {
+                              key: setter.request.roleName
+                              , value: res.user.role
+                          });
+                          layui.data(setter.tableName, {
+                              key: setter.request.tokenName
+                              , value: res.token
+                          });
+
+                          layer.msg('登入成功', {
+                              icon: 1
+                              , time: 500
+                          }, function () {
+                              layui.setter.menu();
+                              if (res.user.role == "admin") {
+                                  location.hash = '/admin-menber/menber/';
+                              } else if (res.user.role == "student") {
+                                  location.hash = '/student/notice/';
+                              } else {
+                                  location.hash = '/teacher/notice/';
+                              }
+                          });
+                      }
+                  },
+                  error: function (e) {
+                      console.log(e);
+                      layer.msg("登录失败", { icon: 5 });
+                  }
+              });
+              return false;
+          };
+      });
+  </script>

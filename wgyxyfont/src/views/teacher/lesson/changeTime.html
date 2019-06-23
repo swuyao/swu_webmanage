@@ -1,0 +1,23 @@
+<div class="layui-form" lay-filter="layuiadmin-form-shopadmin" style="padding: 20px 20px 0 0;">
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">截止时间</label>
+    <div class="layui-input-block">
+      <script type="text/html" template>
+        <input type="text" value="{{ d.params.courseid}}" name="courseid"  style="display: none" class="layui-input">
+        <input type="text" id="test1" value="{{d.params.posttime}}" name="posttime"  lay-verify="required" class="layui-input">
+      </script>
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <div class="layui-input-inline">
+      <input type="button" lay-submit id="LAY-shop-front-submit" lay-filter="LAY-shop-front-submit" value="修改时间" class="layui-btn">
+    </div>
+  </div>
+</div>
+
+<script>
+
+</script>

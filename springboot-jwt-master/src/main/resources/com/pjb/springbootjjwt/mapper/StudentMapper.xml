@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pjb.springbootjjwt.mapper.StudentMapper">
+    <select id="findByStuname" resultType="com.pjb.springbootjjwt.entity.Student">
+      SELECT * FROM tb_student
+      where
+      stuname=#{stuname}
+    </select>
+    <select id="findByStudentnumber" parameterType="com.pjb.springbootjjwt.entity.Student" resultType="com.pjb.springbootjjwt.entity.Student">
+        SELECT * FROM tb_student
+      where
+      studentnumber=#{studentnumber}
+    </select>
+
+    <insert id="addStudent" parameterType="com.pjb.springbootjjwt.entity.Student">
+        insert into
+        tb_student(studentnumber,stuname)
+        values(#{studentnumber},#{stuname});
+    </insert>
+
+    <!--查找所有学生信息-->
+    <select id="findAllStudent" resultType="com.pjb.springbootjjwt.entity.Student">
+        SELECT *
+        FROM
+        tb_student
+    </select>
+
+    <!--删除学生-->
+    <delete id="deleteStudent">
+        delete from
+        tb_student where studentnumber=#{studentnumber};
+    </delete>
+    <!--更新学生的信息-->
+    <update id="updateStudentInfo" parameterType="com.pjb.springbootjjwt.entity.Student">
+        UPDATE tb_student
+        set tel=#{tel},department=#{department},
+        address=#{address},receiveName=#{receiveName},receiveTel=#{receiveTel}
+        WHERE studentnumber=#{studentnumber};
+
+    </update>
+
+    <!--更新学生的指导老师-->
+    <update id="updateStudentTeacher" parameterType="com.pjb.springbootjjwt.entity.Student">
+        UPDATE tb_student
+        set zdteacher=#{zdteacher}
+        WHERE studentnumber=#{studentnumber};
+
+    </update>
+
+    <select id="selectByStunumberReturnCount" resultType="java.lang.Integer">
+        SELECT
+        count(*)
+        FROM tb_student
+        WHERE studentnumber=#{studentnumber}
+    </select>
+
+    <!--查找该学生未提交的作业-->
+    <select id="findStudentNotPost" resultType="com.pjb.springbootjjwt.entity.Course">
+        SELECT c.*
+        FROM
+        tb_course c,tb_sc s
+        WHERE
+        s.homework="" and s.studentnumber=#{studentnumber} AND c.courseid=s.courseid
+
+    </select>
+
+
+
+
+</mapper>
